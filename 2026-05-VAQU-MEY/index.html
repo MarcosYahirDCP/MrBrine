@@ -14,8 +14,8 @@
             --sand: #d7b27a;
             --paper: #e6c794;
             --accent: #8b2e14;
-            --sky: #ff9d47;
             --gold: #d4af37;
+            --wood: #3d2616;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -23,7 +23,7 @@
         body {
             min-height: 100vh;
             font-family: 'Special Elite', cursive;
-            background: #2a1b0a url('https://www.transparenttextures.com/patterns/pinstriped-suit.png');
+            background: #1a0f06 url('https://www.transparenttextures.com/patterns/dark-leather.png');
             color: var(--brown);
             overflow-x: hidden;
         }
@@ -31,256 +31,271 @@
         /* --- PANTALLA INICIAL --- */
         #start-screen {
             position: fixed; inset: 0; z-index: 600;
-            background: url('https://www.transparenttextures.com/patterns/dark-leather.png'), radial-gradient(circle, #4a2c12 0%, #1a0f06 100%);
+            background: radial-gradient(circle, #4a2c12 0%, #000 100%);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border: 15px solid var(--wood);
+            outline: 5px solid var(--gold);
+            outline-offset: -20px;
         }
 
-        .emoji-header {
-            font-size: 5rem;
-            animation: bounce 2s infinite;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
+        .emoji-header { font-size: 6rem; filter: drop-shadow(0 0 20px var(--gold)); animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
         .western-btn {
-            padding: 15px 30px; font-family: 'Rye'; font-size: 1rem; color: var(--gold);
+            padding: 15px 35px; font-family: 'Rye'; font-size: 1.1rem; color: var(--gold);
             background: linear-gradient(145deg, #3d2616, #1a0f06);
-            border: 3px solid var(--gold); border-radius: 50px; cursor: pointer;
-            text-transform: uppercase; box-shadow: 0 8px 15px rgba(0,0,0,0.6);
-            animation: pulse-gold 2s infinite;
-        }
-        @keyframes pulse-gold {
-            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+            border: 3px double var(--gold); border-radius: 50px; cursor: pointer;
+            text-transform: uppercase; box-shadow: 0 8px 20px rgba(0,0,0,0.8);
         }
 
-        /* --- DESIERTO DINÁMICO (Z-INDEX CORREGIDO) --- */
+        /* --- LOADER --- */
         #loader {
             position: fixed; inset: 0; display: none; z-index: 400;
-            background: linear-gradient(to bottom, var(--sky) 0%, #ff5e3a 50%, var(--sand) 100%);
-            overflow: hidden;
+            background: linear-gradient(to bottom, #ff8c42 0%, #ff5e3a 45%, #d7b27a 100%);
         }
-        .sun { position: absolute; top: 10%; left: 50%; transform: translateX(-50%); width: 90px; height: 90px; background: #fff5da; border-radius: 50%; box-shadow: 0 0 70px #ffcc00; }
-        .cloud { position: absolute; color: white; font-size: 3rem; opacity: 0.6; animation: moveClouds linear infinite; }
-        @keyframes moveClouds { from { left: -100px; } to { left: 110%; } }
         
-        .sand-layer { position: absolute; bottom: 0; width: 250%; left: -75%; border-radius: 50% 50% 0 0; }
-        .sand-back { height: 35%; background: #b08d53; z-index: 1; }
-        .sand-mid { height: 22%; background: #c29a5b; z-index: 3; bottom: -2%; }
-        .sand-front { height: 15%; background: #d7b27a; z-index: 5; bottom: -5%; }
+        .sand-layer { 
+            position: absolute; bottom: 0; width: 120%; left: -10%; 
+            background-size: 200px 200px;
+            background-image: url('https://www.transparenttextures.com/patterns/pollen.png');
+        }
+        .sand-back { height: 38%; background-color: #b08d53; z-index: 1; border-radius: 60% 40% 0 0; }
+        .sand-mid { height: 28%; background-color: #c29a5b; z-index: 3; bottom: -2%; border-radius: 40% 60% 0 0; }
+        .sand-front { height: 18%; background-color: #d7b27a; z-index: 5; bottom: -5%; border-radius: 50% 50% 0 0; }
         
-        /* Cactus ahora están delante (Z-index 6) y anclados al fondo (bottom) */
-        .cactus { position: absolute; z-index: 6; filter: drop-shadow(4px 4px 5px rgba(0,0,0,0.2)); bottom: 0; }
+        .cactus { position: absolute; z-index: 6; font-size: 4rem; filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.2)); }
 
-        /* --- CARTEL WANTED --- */
-        #main-content { display: none; padding: 20px 0; flex-direction: column; align-items: center; }
-        
-        .poster-wrapper {
-            perspective: 1000px;
-            margin-top: 20px;
-            transform-origin: top center;
-            animation: hang-swing 4s ease-in-out infinite;
+        .loader-text {
+            position: absolute; top: 40%; width: 100%; text-align: center;
+            font-family: 'Rye'; color: white; font-size: 2.2rem;
+            text-shadow: 3px 3px #000; z-index: 50;
+            animation: pulseText 1.5s ease-in-out infinite;
+        }
+        @keyframes pulseText { 0%, 100% { opacity: 0.6; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.05); } }
+
+        /* --- CARTEL WANTED CON ANIMACIÓN DE VIENTO --- */
+        .poster-wrapper { 
+            perspective: 1000px; 
+            margin-top: 30px; 
+            /* Animación de movimiento natural */
+            animation: wind-swing 6s ease-in-out infinite; 
+            transform-origin: top center; 
         }
 
-        @keyframes hang-swing {
-            0%, 100% { transform: rotate(2deg); }
-            50% { transform: rotate(-2deg); }
+        @keyframes wind-swing { 
+            0%, 100% { transform: rotateX(2deg) rotateY(1deg) rotateZ(0.5deg); } 
+            50% { transform: rotateX(-3deg) rotateY(-1deg) rotateZ(-0.5deg); } 
         }
 
         .poster {
-            width: 90vw; max-width: 380px;
-            background: url('https://www.transparenttextures.com/patterns/paper.png'), var(--paper);
-            padding: 30px 15px; border: 12px solid #b8935a;
-            border-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png') 30 round;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-            opacity: 0; transition: 1s;
-            text-align: center; /* CENTRADO DE TEXTO */
+            width: 92vw; max-width: 380px;
+            background: 
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.03) 3px, transparent 4px),
+                url('https://www.transparenttextures.com/patterns/natural-paper.png'),
+                var(--paper);
+            padding: 40px 25px;
+            border: 2px solid #b8935a;
+            box-shadow: 2px 25px 50px rgba(0,0,0,0.8);
+            position: relative; opacity: 0; transition: 1.5s;
+            text-align: center;
         }
         .poster.show { opacity: 1; }
 
-        .photo-container { 
-            position: relative; width: 85%; margin: 15px auto; padding: 8px; 
-            background: #fff; transform: rotate(-1deg); box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+        .poster-header { font-family: 'Rye'; font-size: 3.8rem; color: #3d2616; line-height: 1; margin-bottom: 5px; }
+        .poster-divider {
+            border-top: 2px solid #3d2616; border-bottom: 2px solid #3d2616;
+            padding: 4px 0; margin: 10px 0; font-weight: bold; font-size: 0.9rem;
         }
-        .star-icon { position: absolute; font-size: 1.5rem; color: #1d1208; z-index: 5; }
-        .top-l { top: 5px; left: 5px; } .top-r { top: 5px; right: 5px; }
-        .bot-l { bottom: 5px; left: 5px; } .bot-r { bottom: 5px; right: 5px; }
-        .photo-container img { width: 100%; display: block; filter: sepia(0.3); }
 
-        /* --- CARRETE DE CINE (CORREGIDO Y RESPONSIVO) --- */
-        .film-strip {
-            width: 100%; margin-top: 50px; background: #000; padding: 40px 0;
-            display: flex; 
-            overflow-x: auto; 
-            scroll-snap-type: x mandatory; 
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
+        .photo-container { 
+            position: relative; width: 90%; margin: 20px auto; padding: 12px; 
+            background: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid #ddd;
         }
-        .film-strip::-webkit-scrollbar { display: none; }
+        .photo-container img { width: 100%; display: block; filter: sepia(0.2); }
+        .photo-container::before, .photo-container::after {
+            content: "★"; position: absolute; font-size: 1.2rem; color: #3d2616; z-index: 5;
+        }
+        .photo-container::before { top: 5px; left: 5px; }
+        .photo-container::after { bottom: 5px; right: 5px; }
+
+        .poster-names { font-family: 'Pirata One'; font-size: 3.6rem; color: var(--accent); margin: 15px 0 10px; line-height: 0.9; }
+        .reward-box { background: #3d2616; color: var(--paper); display: inline-block; padding: 12px 30px; font-family: 'Rye'; font-size: 1rem; }
+
+        /* --- CINTA DE VIDEO (CARRUSEL) --- */
+        .film-strip-wrapper {
+            width: 100%; overflow: hidden; margin: 60px 0; background: #000;
+            padding: 45px 0; position: relative;
+            border-top: 15px solid #000; border-bottom: 15px solid #000;
+        }
+
+        .film-strip-wrapper::before, .film-strip-wrapper::after {
+            content: ""; position: absolute; left: 0; width: 200%; height: 35px;
+            background-image: 
+                radial-gradient(circle, #ddd 15%, transparent 20%), 
+                linear-gradient(to right, #ddd 0%, #ddd 70%, transparent 70%, transparent 100%); 
+            background-size: 60px 35px, 30px 22px;
+            background-repeat: repeat-x;
+            background-position: 0px 0px, 15px 5px;
+            z-index: 10; opacity: 0.9;
+        }
+        .film-strip-wrapper::before { top: 5px; }
+        .film-strip-wrapper::after { bottom: 5px; }
+
+        .film-strip { display: flex; flex-wrap: nowrap; align-items: center; will-change: transform; }
 
         .frame {
-            /* En móvil ocupa casi todo el ancho, en PC se divide entre 3 */
-            flex: 0 0 80vw; 
-            margin: 0 10px;
-            max-width: 320px; 
-            height: 380px; 
-            scroll-snap-align: center; 
-            background: #1a0f06;
-            border-left: 20px solid #111; 
-            border-right: 20px solid #111;
-            position: relative; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            color: var(--paper); 
-            text-align: center; 
-            padding: 20px;
+            min-width: 280px; flex: 0 0 280px; margin: 0 12px; height: 210px;
+            background-size: cover; background-position: center;
+            border-radius: 15px; border: 5px solid #1a1a1a;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            position: relative; color: white; text-align: center;
+            transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(0.85); opacity: 0.4; filter: grayscale(1) brightness(0.4);
         }
 
-        /* Ajuste para Desktop: Se ven 3 slots */
-        @media (min-width: 1024px) {
-            .film-strip { justify-content: center; overflow-x: hidden; }
-            .frame { flex: 0 0 300px; scroll-snap-align: none; }
+        .frame::before { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,0.5); border-radius: 10px; z-index: 1; }
+        .frame > * { position: relative; z-index: 2; }
+        .frame.active { transform: scale(1.05); opacity: 1; filter: grayscale(0) brightness(1); border-color: #444; }
+
+        .frame h3 { font-family: 'Rye'; color: var(--gold); margin-bottom: 5px; font-size: 1.4rem; }
+        .frame-big { font-size: 2.8rem; text-shadow: 3px 3px #000; color: #fff; line-height: 1; }
+
+        @media (min-width: 1024px) { 
+            .frame { min-width: 350px; flex: 0 0 350px; height: 250px; } 
         }
-
-        .frame::before { content: ""; position: absolute; left: -14px; top: 0; bottom: 0; width: 8px; background: radial-gradient(circle, #fff 40%, transparent 41%); background-size: 100% 40px; }
-        .frame::after { content: ""; position: absolute; right: -14px; top: 0; bottom: 0; width: 8px; background: radial-gradient(circle, #fff 40%, transparent 41%); background-size: 100% 40px; }
-
-        /* --- PUERTAS --- */
-        #saloon-doors { position: fixed; inset: 0; z-index: 550; display: none; perspective: 1200px; }
-        .door {
-            position: absolute; width: 50%; height: 100%;
-            background: #5d3a1a url('https://www.transparenttextures.com/patterns/wood-pattern.png');
-            border: 10px solid #2a180b; transition: 1.5s;
-        }
-        .left-door { left: 0; transform-origin: left; }
-        .right-door { right: 0; transform-origin: right; }
-        .left-door.open { transform: rotateY(-110deg); }
-        .right-door.open { transform: rotateY(110deg); }
-
     </style>
 </head>
 <body>
 
 <div id="start-screen">
     <div class="emoji-header">🤠</div>
-    <h1 style="font-family:'Rye'; color:var(--sand); margin-bottom:30px; text-shadow: 2px 2px #000; text-align: center;">¡BIENVENIDO!</h1>
-    <button class="western-btn" onclick="openSaloon()">Abrir Invitación</button>
-</div>
-
-<div id="saloon-doors">
-    <div class="door left-door"></div>
-    <div class="door right-door"></div>
+    <h1 style="font-family:'Rye'; color:var(--gold); margin: 25px 0; text-align:center;">Haz Recibido Un Mensaje Del Lejano Oeste</h1>
+    <button class="western-btn" onclick="openSaloon()">Abrir Mensaje</button>
 </div>
 
 <div id="loader">
-    <div class="sun"></div>
-    <div class="cloud" style="top:10%; animation-duration:15s;">☁️</div>
-    <div class="cloud" style="top:25%; animation-duration:25s; animation-delay:-5s;">☁️</div>
-    
+    <div class="loader-text">Necesitamos de tu presencia...</div>
+    <div class="sun" style="position: absolute; top: 10%; left: 50%; transform: translateX(-50%); width: 100px; height: 100px; background: #fff5da; border-radius: 50%; box-shadow: 0 0 80px #fff;"></div>
     <div class="sand-layer sand-back"></div>
-    <!-- Cactus anclados a la arena con bottom relativo a su capa -->
-    <div class="cactus" style="bottom:30%; left:10%; font-size:3rem;">🌵</div>
-    <div class="cactus" style="bottom:28%; left:40%; font-size:2rem;">🌵</div>
-    <div class="cactus" style="bottom:30%; left:80%; font-size:2.5rem;">🌵</div>
-    
     <div class="sand-layer sand-mid"></div>
-    <div class="cactus" style="bottom:15%; left:5%; font-size:4rem;">🌵</div>
-    <div class="cactus" style="bottom:13%; right:15%; font-size:5.5rem;">🌵</div>
-    
     <div class="sand-layer sand-front"></div>
-    <div class="cactus" style="bottom:2%; left:25%; font-size:6rem;">🌵</div>
-    <div class="cactus" style="bottom:1%; right:30%; font-size:7rem;">🌵</div>
-
-    <div style="position:absolute; top:45%; width:100%; text-align:center; font-family:'Rye'; color:white; font-size:1.8rem; text-shadow:3px 3px 6px #000; z-index: 50;">CABALGANDO...</div>
+    <div class="cactus" style="bottom: 30%; left: 12%;">🌵</div>
+    <div class="cactus" style="bottom: 25%; left: 48%;">🌵</div>
+    <div class="cactus" style="bottom: 35%; right: 15%;">🌵</div>
 </div>
 
-<main id="main-content">
+<main id="main-content" style="display:none; flex-direction:column; align-items:center; padding-bottom: 50px;">
+    <!-- POSTER CON ANIMACIÓN ACTIVA -->
     <div class="poster-wrapper">
         <div class="poster" id="card">
-            <h1 style="font-family:'Rye'; font-size:3.5rem; margin:0;">WANTED</h1>
-            <p style="border-top:2px solid var(--brown); border-bottom:2px solid var(--brown); font-weight:bold; padding:5px 0;">SE BUSCAN COMPLICES</p>
-            
-            <div class="photo-container">
-                <span class="star-icon top-l">★</span><span class="star-icon top-r">★</span>
-                <span class="star-icon bot-l">★</span><span class="star-icon bot-r">★</span>
-                <img src="img.jpg" alt="Festejados">
+            <h1 class="poster-header">WANTED</h1>
+            <div class="poster-divider">SE BUSCAN CÓMPLICES</div>
+            <div class="photo-container"><img src="img.jpg" alt="Festejados"></div>
+            <h2 class="poster-names">FABIÁN & ÁNGEL</h2>
+            <div class="reward-box">RECOMPENSA: FIESTA Y DIVERSION JUNTO A NOSOTROS</div>
+            <p style="font-size:0.7rem; margin-top:15px; font-weight:bold;"> NO PUEDES FALTAR A NUESTROS CUMPLEAÑOS. CELEBRA CON NOSOTROS</p>
+        </div>
+    </div>
+
+    <div class="film-strip-wrapper">
+        <div class="film-strip" id="slider">
+            <div class="frame" style="background-image: url('date_img.png');">
+                <h3>CUÁNDO</h3><div class="frame-big">09</div><p>MAYO 2026</p>
             </div>
-
-            <h2 style="font-family:'Pirata One'; font-size:3.2rem; color:var(--accent); line-height:1;">FABIÁN & ÁNGEL</h2>
-            <div style="background:var(--brown); color:var(--paper); display:inline-block; padding:8px 25px; margin-top:15px; font-family:'Rye';">RECOMPENSA: FIESTA TOTAL</div>
+            <div class="frame" style="background-image: url('time_img.png');">
+                <h3>HORA</h3><div class="frame-big">3:00</div><p>DE LA TARDE</p>
+            </div>
+            <div class="frame" style="background-image: url('place_img.png');">
+                <h3>DÓNDE</h3><p>Pto. Príncipe No. 30</p><p style="color:var(--gold);">📍 CASA DE LOS FESTEJADOS</p>
+            </div>
+            <div class="frame" style="background-image: url('food_img.png');">
+                <h3>EL BOTÍN</h3><p>BANQUETE VAQUERO</p><p>¡Comida, bebida y pastel!</p>
+            </div>
+            <div class="frame" style="background-image: url('clothe_img.png');">
+                <h3>VESTIMENTA</h3><p>CÓDIGO: VAQUERO</p><p>¡Botas y Sombrero! 🤠</p>
+            </div>
         </div>
     </div>
 
-    <!-- CARRETE CON SCROLL CORREGIDO -->
-    <div class="film-strip">
-        <div class="frame">
-            <h3 style="font-family:'Rye'; color:var(--gold); margin-bottom:15px;">CUÁNDO</h3>
-            <p style="font-size:3rem;">09</p>
-            <p>MAYO 2026</p>
-            <p style="margin-top:10px;">SÁBADO</p>
-        </div>
-        <div class="frame">
-            <h3 style="font-family:'Rye'; color:var(--gold); margin-bottom:15px;">A QUÉ HORA</h3>
-            <p style="font-size:3rem;">3:00</p>
-            <p>DE LA TARDE</p>
-        </div>
-        <div class="frame">
-            <h3 style="font-family:'Rye'; color:var(--gold); margin-bottom:15px;">DÓNDE</h3>
-            <p>Pto. Príncipe No. 30</p>
-            <p style="margin-top:15px; font-size:0.9rem;">📍 Casa de los Festejados</p>
-            <a href="https://maps.app.goo.gl/..." style="color:var(--gold); margin-top:10px; font-size:0.8rem;">Ver en Google Maps</a>
-        </div>
-    </div>
-
-    <div style="margin: 50px 0;">
-        <button class="western-btn" onclick="confirmar()">Confirmar Asistencia</button>
-    </div>
 </main>
 
 <script>
+    const slider = document.getElementById("slider");
+    let isMoving = false;
+    let autoPlay;
+
     function openSaloon() {
-        const doors = document.getElementById('saloon-doors');
         const screen = document.getElementById('start-screen');
-        doors.style.display = 'block';
-        setTimeout(() => {
-            document.querySelector('.left-door').classList.add('open');
-            document.querySelector('.right-door').classList.add('open');
-            screen.style.opacity = '0';
-            setTimeout(() => {
-                screen.style.display = 'none';
-                showLoader();
-            }, 800);
-        }, 100);
+        screen.style.opacity = '0'; screen.style.transition = '0.8s';
+        setTimeout(() => { screen.style.display = 'none'; showLoader(); }, 800);
     }
 
     function showLoader() {
         const loader = document.getElementById('loader');
         loader.style.display = 'block';
         setTimeout(() => {
-            loader.style.opacity = '0';
-            loader.style.transition = '1s';
-            setTimeout(() => {
-                loader.style.display = 'none';
-                showContent();
-            }, 1000);
-        }, 3500); 
+            loader.style.opacity = '0'; loader.style.transition = '1s';
+            setTimeout(() => { loader.style.display = 'none'; showContent(); }, 1000);
+        }, 3500);
     }
 
     function showContent() {
-        const main = document.getElementById('main-content');
-        main.style.display = 'flex';
-        document.body.style.overflowY = 'auto';
-        setTimeout(() => { document.getElementById('card').classList.add('show'); }, 300);
+        document.getElementById('main-content').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('card').classList.add('show');
+            setupCarousel();
+            autoPlay = setInterval(nextSlide, 3500);
+        }, 300);
     }
 
-    function confirmar() {
-        window.open('https://wa.me/TUNUMERO', '_blank');
+    function getActiveIndex() {
+        return window.innerWidth >= 1024 ? 2 : 1; 
     }
+
+    function setupCarousel() {
+        const index = getActiveIndex();
+        for(let i=0; i < index; i++) {
+            slider.insertBefore(slider.lastElementChild, slider.firstElementChild);
+        }
+        updatePosition(false);
+    }
+
+    function updatePosition(animate = true) {
+        const slides = document.querySelectorAll(".frame");
+        const slideWidth = slides[0].offsetWidth + 24; 
+        const activeIdx = getActiveIndex();
+        const offset = (window.innerWidth - slideWidth) / 2;
+        
+        slider.style.transition = animate ? "transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)" : "none";
+        slider.style.transform = `translateX(${-activeIdx * slideWidth + offset}px)`;
+        
+        slides.forEach((s, i) => {
+            s.classList.remove('active');
+            if (i === activeIdx) s.classList.add('active');
+        });
+    }
+
+    function nextSlide() {
+        if (isMoving) return;
+        isMoving = true;
+        const slides = document.querySelectorAll(".frame");
+        const slideWidth = slides[0].offsetWidth + 24;
+        const activeIdx = getActiveIndex();
+        const offset = (window.innerWidth - slideWidth) / 2;
+
+        slider.style.transition = "transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
+        slider.style.transform = `translateX(${-(activeIdx + 1) * slideWidth + offset}px)`;
+
+        setTimeout(() => {
+            slider.style.transition = "none";
+            slider.appendChild(slider.firstElementChild);
+            updatePosition(false);
+            isMoving = false;
+        }, 800);
+    }
+
+    function confirmar() { window.open('https://wa.me/TUNUMERO', '_blank'); }
+    window.addEventListener('resize', () => updatePosition(false));
 </script>
 
 </body>
