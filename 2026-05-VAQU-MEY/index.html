@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación Vaquera - Fabián y Ángel</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rye&family=Special+Elite&family=Pirata+One&display=swap');
+
+        :root {
+            --brown: #4a2c12;
+            --dark: #1d1208;
+            --sand: #d7b27a;
+            --paper: #e6c794;
+            --accent: #8b2e14;
+            --sky: #ff9d47;
+            --gold: #d4af37;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Special Elite', cursive;
+            background: #2a1b0a url('https://www.transparenttextures.com/patterns/pinstriped-suit.png');
+            color: var(--brown);
+            overflow-x: hidden;
+        }
+
+        /* --- PANTALLA INICIAL --- */
+        #start-screen {
+            position: fixed; inset: 0; z-index: 600;
+            background: url('https://www.transparenttextures.com/patterns/dark-leather.png'), radial-gradient(circle, #4a2c12 0%, #1a0f06 100%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        .emoji-header {
+            font-size: 5rem;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .western-btn {
+            padding: 15px 30px; font-family: 'Rye'; font-size: 1rem; color: var(--gold);
+            background: linear-gradient(145deg, #3d2616, #1a0f06);
+            border: 3px solid var(--gold); border-radius: 50px; cursor: pointer;
+            text-transform: uppercase; box-shadow: 0 8px 15px rgba(0,0,0,0.6);
+            animation: pulse-gold 2s infinite;
+        }
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+
+        /* --- DESIERTO DINÁMICO (Z-INDEX CORREGIDO) --- */
+        #loader {
+            position: fixed; inset: 0; display: none; z-index: 400;
+            background: linear-gradient(to bottom, var(--sky) 0%, #ff5e3a 50%, var(--sand) 100%);
+            overflow: hidden;
+        }
+        .sun { position: absolute; top: 10%; left: 50%; transform: translateX(-50%); width: 90px; height: 90px; background: #fff5da; border-radius: 50%; box-shadow: 0 0 70px #ffcc00; }
+        .cloud { position: absolute; color: white; font-size: 3rem; opacity: 0.6; animation: moveClouds linear infinite; }
+        @keyframes moveClouds { from { left: -100px; } to { left: 110%; } }
+        
+        .sand-layer { position: absolute; bottom: 0; width: 250%; left: -75%; border-radius: 50% 50% 0 0; }
+        .sand-back { height: 35%; background: #b08d53; z-index: 1; }
+        .sand-mid { height: 22%; background: #c29a5b; z-index: 3; bottom: -2%; }
+        .sand-front { height: 15%; background: #d7b27a; z-index: 5; bottom: -5%; }
+        
+        /* Cactus ahora están delante (Z-index 6) y anclados al fondo (bottom) */
+        .cactus { position: absolute; z-index: 6; filter: drop-shadow(4px 4px 5px rgba(0,0,0,0.2)); bottom: 0; }
+
+        /* --- CARTEL WANTED --- */
+        #main-content { display: none; padding: 20px 0; flex-direction: column; align-items: center; }
+        
+        .poster-wrapper {
+            perspective: 1000px;
+            margin-top: 20px;
+            transform-origin: top center;
+            animation: hang-swing 4s ease-in-out infinite;
+        }
+
+        @keyframes hang-swing {
+            0%, 100% { transform: rotate(2deg); }
+            50% { transform: rotate(-2deg); }
+        }
+
+        .poster {
+            width: 90vw; max-width: 380px;
+            background: url('https://www.transparenttextures.com/patterns/paper.png'), var(--paper);
+            padding: 30px 15px; border: 12px solid #b8935a;
+            border-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png') 30 round;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            opacity: 0; transition: 1s;
+            text-align: center; /* CENTRADO DE TEXTO */
+        }
+        .poster.show { opacity: 1; }
+
+        .photo-container { 
+            position: relative; width: 85%; margin: 15px auto; padding: 8px; 
+            background: #fff; transform: rotate(-1deg); box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+        }
+        .star-icon { position: absolute; font-size: 1.5rem; color: #1d1208; z-index: 5; }
+        .top-l { top: 5px; left: 5px; } .top-r { top: 5px; right: 5px; }
+        .bot-l { bottom: 5px; left: 5px; } .bot-r { bottom: 5px; right: 5px; }
+        .photo-container img { width: 100%; display: block; filter: sepia(0.3); }
+
+        /* --- CARRETE DE CINE (CORREGIDO Y RESPONSIVO) --- */
+        .film-strip {
+            width: 100%; margin-top: 50px; background: #000; padding: 40px 0;
+            display: flex; 
+            overflow-x: auto; 
+            scroll-snap-type: x mandatory; 
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .film-strip::-webkit-scrollbar { display: none; }
+
+        .frame {
+            /* En móvil ocupa casi todo el ancho, en PC se divide entre 3 */
+            flex: 0 0 80vw; 
+            margin: 0 10px;
+            max-width: 320px; 
+            height: 380px; 
+            scroll-snap-align: center; 
+            background: #1a0f06;
+            border-left: 20px solid #111; 
+            border-right: 20px solid #111;
+            position: relative; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            color: var(--paper); 
+            text-align: center; 
+            padding: 20px;
+        }
+
+        /* Ajuste para Desktop: Se ven 3 slots */
+        @media (min-width: 1024px) {
+            .film-strip { justify-content: center; overflow-x: hidden; }
+            .frame { flex: 0 0 300px; scroll-snap-align: none; }
+        }
+
+        .frame::before { content: ""; position: absolute; left: -14px; top: 0; bottom: 0; width: 8px; background: radial-gradient(circle, #fff 40%, transparent 41%); background-size: 100% 40px; }
+        .frame::after { content: ""; position: absolute; right: -14px; top: 0; bottom: 0; width: 8px; background: radial-gradient(circle, #fff 40%, transparent 41%); background-size: 100% 40px; }
+
+        /* --- PUERTAS --- */
+        #saloon-doors { position: fixed; inset: 0; z-index: 550; display: none; perspective: 1200px; }
+        .door {
+            position: absolute; width: 50%; height: 100%;
+            background: #5d3a1a url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+            border: 10px solid #2a180b; transition: 1.5s;
+        }
+        .left-door { left: 0; transform-origin: left; }
+        .right-door { right: 0; transform-origin: right; }
+        .left-door.open { transform: rotateY(-110deg); }
+        .right-door.open { transform: rotateY(110deg); }
+
+    </style>
+</head>
+<body>
+
+<div id="start-screen">
+    <div class="emoji-header">🤠</div>
+    <h1 style="font-family:'Rye'; color:var(--sand); margin-bottom:30px; text-shadow: 2px 2px #000; text-align: center;">¡BIENVENIDO!</h1>
+    <button class="western-btn" onclick="openSaloon()">Abrir Invitación</button>
+</div>
+
+<div id="saloon-doors">
+    <div class="door left-door"></div>
+    <div class="door right-door"></div>
+</div>
+
+<div id="loader">
+    <div class="sun"></div>
+    <div class="cloud" style="top:10%; animation-duration:15s;">☁️</div>
+    <div class="cloud" style="top:25%; animation-duration:25s; animation-delay:-5s;">☁️</div>
+    
+    <div class="sand-layer sand-back"></div>
+    <!-- Cactus anclados a la arena con bottom relativo a su capa -->
+    <div class="cactus" style="bottom:30%; left:10%; font-size:3rem;">🌵</div>
+    <div class="cactus" style="bottom:28%; left:40%; font-size:2rem;">🌵</div>
+    <div class="cactus" style="bottom:30%; left:80%; font-size:2.5rem;">🌵</div>
+    
+    <div class="sand-layer sand-mid"></div>
+    <div class="cactus" style="bottom:15%; left:5%; font-size:4rem;">🌵</div>
+    <div class="cactus" style="bottom:13%; right:15%; font-size:5.5rem;">🌵</div>
+    
+    <div class="sand-layer sand-front"></div>
+    <div class="cactus" style="bottom:2%; left:25%; font-size:6rem;">🌵</div>
+    <div class="cactus" style="bottom:1%; right:30%; font-size:7rem;">🌵</div>
+
+    <div style="position:absolute; top:45%; width:100%; text-align:center; font-family:'Rye'; color:white; font-size:1.8rem; text-shadow:3px 3px 6px #000; z-index: 50;">CABALGANDO...</div>
+</div>
+
+<main id="main-content">
+    <div class="poster-wrapper">
+        <div class="poster" id="card">
+            <h1 style="font-family:'Rye'; font-size:3.5rem; margin:0;">WANTED</h1>
+            <p style="border-top:2px solid var(--brown); border-bottom:2px solid var(--brown); font-weight:bold; padding:5px 0;">SE BUSCAN COMPLICES</p>
+            
+            <div class="photo-container">
+                <span class="star-icon top-l">★</span><span class="star-icon top-r">★</span>
+                <span class="star-icon bot-l">★</span><span class="star-icon bot-r">★</span>
+                <img src="img.jpg" alt="Festejados">
+            </div>
+
+            <h2 style="font-family:'Pirata One'; font-size:3.2rem; color:var(--accent); line-height:1;">FABIÁN & ÁNGEL</h2>
+            <div style="background:var(--brown); color:var(--paper); display:inline-block; padding:8px 25px; margin-top:15px; font-family:'Rye';">RECOMPENSA: FIESTA TOTAL</div>
+        </div>
+    </div>
+
+    <!-- CARRETE CON SCROLL CORREGIDO -->
+    <div class="film-strip">
+        <div class="frame">
+            <h3 style="font-family:'Rye'; color:var(--gold); margin-bottom:15px;">CUÁNDO</h3>
+            <p style="font-size:3rem;">09</p>
+            <p>MAYO 2026</p>
+            <p style="margin-top:10px;">SÁBADO</p>
+        </div>
+        <div class="frame">
+            <h3 style="font-family:'Rye'; color:var(--gold); margin-bottom:15px;">A QUÉ HORA</h3>
+            <p style="font-size:3rem;">3:00</p>
+            <p>DE LA TARDE</p>
+        </div>
+        <div class="frame">
+            <h3 style="font-family:'Rye'; color:var(--gold); margin-bottom:15px;">DÓNDE</h3>
+            <p>Pto. Príncipe No. 30</p>
+            <p style="margin-top:15px; font-size:0.9rem;">📍 Casa de los Festejados</p>
+            <a href="https://maps.app.goo.gl/..." style="color:var(--gold); margin-top:10px; font-size:0.8rem;">Ver en Google Maps</a>
+        </div>
+    </div>
+
+    <div style="margin: 50px 0;">
+        <button class="western-btn" onclick="confirmar()">Confirmar Asistencia</button>
+    </div>
+</main>
+
+<script>
+    function openSaloon() {
+        const doors = document.getElementById('saloon-doors');
+        const screen = document.getElementById('start-screen');
+        doors.style.display = 'block';
+        setTimeout(() => {
+            document.querySelector('.left-door').classList.add('open');
+            document.querySelector('.right-door').classList.add('open');
+            screen.style.opacity = '0';
+            setTimeout(() => {
+                screen.style.display = 'none';
+                showLoader();
+            }, 800);
+        }, 100);
+    }
+
+    function showLoader() {
+        const loader = document.getElementById('loader');
+        loader.style.display = 'block';
+        setTimeout(() => {
+            loader.style.opacity = '0';
+            loader.style.transition = '1s';
+            setTimeout(() => {
+                loader.style.display = 'none';
+                showContent();
+            }, 1000);
+        }, 3500); 
+    }
+
+    function showContent() {
+        const main = document.getElementById('main-content');
+        main.style.display = 'flex';
+        document.body.style.overflowY = 'auto';
+        setTimeout(() => { document.getElementById('card').classList.add('show'); }, 300);
+    }
+
+    function confirmar() {
+        window.open('https://wa.me/TUNUMERO', '_blank');
+    }
+</script>
+
+</body>
+</html>
