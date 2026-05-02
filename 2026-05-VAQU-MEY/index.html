@@ -380,6 +380,25 @@
       line-height: 1;
     }
 
+    /* ESTILO BOTÓN MÚSICA */
+    .music-control {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 700;
+      background: rgba(61, 38, 22, 0.8);
+      border: 2px solid var(--gold);
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      color: var(--gold);
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
     @media (min-width: 1024px) {
       .frame {
         min-width: 350px;
@@ -391,6 +410,14 @@
 </head>
 
 <body>
+
+  <!-- ELEMENTO DE AUDIO -->
+  <audio id="background-music" loop>
+    <source src="tema-vaquero.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- BOTÓN DE CONTROL DE MÚSICA (FLOTANTE) -->
+  <div id="music-btn" class="music-control" onclick="toggleMusic()">🔊</div>
 
   <div id="start-screen">
     <div class="emoji-header">🤠</div>
@@ -460,13 +487,30 @@
 
   <script>
     const slider = document.getElementById("slider");
+    const music = document.getElementById("background-music");
+    const musicBtn = document.getElementById("music-btn");
     let isMoving = false;
     let autoPlay;
 
     function openSaloon() {
+      // Iniciar música tras interacción
+      music.play();
+      music.volume = 0.4;
+      musicBtn.style.display = "flex";
+
       const screen = document.getElementById('start-screen');
       screen.style.opacity = '0'; screen.style.transition = '0.8s';
       setTimeout(() => { screen.style.display = 'none'; showLoader(); }, 800);
+    }
+
+    function toggleMusic() {
+      if (music.paused) {
+        music.play();
+        musicBtn.innerHTML = "🔊";
+      } else {
+        music.pause();
+        musicBtn.innerHTML = "🔈";
+      }
     }
 
     function showLoader() {
